@@ -1,0 +1,8 @@
+opencv-python        # phát hiện khuôn mặt
+Pillow               # xử lí ảnh
+sqlalchemy           # ORM
+pymysql
+typing-extensions
+python-multipart     # upload ảnh
+ultralytics
+mysql-connector-python
