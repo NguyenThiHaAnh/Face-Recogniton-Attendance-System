@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Face Recognition Attendance System</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/babel@5.8.38/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Component đăng nhập
+    const Login = ({ onLogin }) => {
+      const [username, setUsername] = useState('');
+      const [password, setPassword] = useState('');
+
+      const handleLogin = () => {
+        if (username && password) {
+          onLogin();
+        } else {
+          alert('Vui lòng nhập đầy đủ thông tin');
+        }
+      };
+
+      return (
+        <div className="flex items-center justify-center h-screen bg-gray-100">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+            <h2 className="text-2xl font-bold mb-6 text-center">Đăng nhập</h2>
+            <input
+              type="text"
+              placeholder="Tên đăng nhập"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full p-2 mb-4 border rounded"
+            />
+            <input
+              type="password"
+              placeholder="Mật khẩu"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-2 mb-4 border rounded"
+            />
+            <button
+              onClick={handleLogin}
+              className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            >
+              Đăng nhập
+            </button>
+          </div>
+        </div>
+      );
+    };
+
+    // Component hiển thị ngày giờ
+    const Clock = () => {
+      const [time, setTime] = useState(new Date());
+
+      useEffect(() => {
+        const timer = setInterval(() => setTime(new Date()), 1000);
+        return () => clearInterval(timer);
+      }, []);
+
+      return (
+        <div className="text-lg font-semibold">
+          {time.toLocaleDateString('vi-VN')} {time.toLocaleTimeString('vi-VN')}
+        </div>
+      );
+    };
+
+    // Component quản lý sinh viên
+    const Student = () => {
+      const [students, setStudents] = useState([]);
+      const [newStudent, setNewStudent] = useState({
+        id: '',
+        name: '',
+        major: '',
+        year: '',
+      });
+
+      const addStudent = () => {
+        if (newStudent.id && newStudent.name && newStudent.major && newStudent.year) {
+          setStudents([...students, newStudent]);
+          setNewStudent({ id: '', name: '', major: '', year: '' });
+        } else {
+          alert('Vui lòng nhập đầy đủ thông tin');
+        }
+      };
+
+      return (
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-4">Quản lý sinh viên</h2>
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="ID"
+              value={newStudent.id}
+              onChange={(e) => setNewStudent({ ...newStudent, id: e.target.value })}
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Họ tên"
+              value={newStudent.name}
+              onChange={(e) => setNewStudent({ ...newStudent, name: e.target.value })}
+              className="p-2 border rounded"
+            />
+            <select
+              value={newStudent.major}
+              onChange={(e) => setNewStudent({ ...newStudent, major: e.target.value })}
+              className="p-2 border rounded"
+            >
+              <option value="">Chọn ngành học</option>
+              <option value="CNTT">CNTT</option>
+              <option value="Kinh tế">Kinh tế</option>
+              <option value="Cơ khí">Cơ khí</option>
+            </select>
+            <select
+              value={newStudent.year}
+              onChange={(e) => setNewStudent({ ...newStudent, year: e.target.value })}
+              className="p-2 border rounded"
+            >
+              <option value="">Chọn năm học</option>
+              <option value="Năm 1">Năm 1</option>
+              <option value="Năm 2">Năm 2</option>
+              <option value="Năm 3">Năm 3</option>
+              <option value="Năm 4">Năm 4</option>
+            </select>
+            <button
+              onClick={addStudent}
+              className="col-span-2 bg-green-500 text-white p-2 rounded hover:bg-green-600"
+            >
+              Thêm sinh viên
+            </button>
+          </div>
+          <table className="w-full border-collapse border">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border p-2">ID</th>
+                <th className="border p-2">Họ tên</th>
+                <th className="border p-2">Ngành học</th>
+                <th className="border p-2">Năm học</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((student, index) => (
+                <tr key={index}>
+                  <td className="border p-2">{student.id}</td>
+                  <td className="border p-2">{student.name}</td>
+                  <td className="border p-2">{student.major}</td>
+                  <td className="border p-2">{student.year}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    };
+
+    // Component quản lý môn học
+    const Subject = () => {
+      const [subjects, setSubjects] = useState([]);
+      const [newSubject, setNewSubject] = useState('');
+
+      const addSubject = () => {
+        if (newSubject) {
+          setSubjects([...subjects, newSubject]);
+          setNewSubject('');
+        } else {
+          alert('Vui lòng nhập tên môn học');
+        }
+      };
+
+      return (
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-4">Quản lý môn học</h2>
+          <div className="flex gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Tên môn học"
+              value={newSubject}
+              onChange={(e) => setNewSubject(e.target.value)}
+              className="p-2 border rounded flex-1"
+            />
+            <button
+              onClick={addSubject}
+              className="bg-green-500 text-white p-2 rounded hover:bg-green-600"
+            >
+              Thêm môn học
+            </button>
+          </div>
+          <ul className="list-disc pl-6">
+            {subjects.map((subject, index) => (
+              <li key={index}>{subject}</li>
+            ))}
+          </ul>
+        </div>
+      );
+    };
+
+    // Component quản lý lịch học
+    const Lecture = () => {
+      const [lectures, setLectures] = useState([]);
+      const [newLecture, setNewLecture] = useState({
+        subject: '',
+        time: '',
+        session: '',
+        teacher: '',
+      });
+
+      const addLecture = () => {
+        if (newLecture.subject && newLecture.time && newLecture.session && newLecture.teacher) {
+          setLectures([...lectures, newLecture]);
+          setNewLecture({ subject: '', time: '', session: '', teacher: '' });
+        } else {
+          alert('Vui lòng nhập đầy đủ thông tin');
+        }
+      };
+
+      return (
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-4">Quản lý lịch học</h2>
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <input
+              type="text"
+              placeholder="Môn học"
+              value={newLecture.subject}
+              onChange={(e) => setNewLecture({ ...newLecture, subject: e.target.value })}
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Giờ học (VD: 08:00-10:00)"
+              value={newLecture.time}
+              onChange={(e) => setNewLecture({ ...newLecture, time: e.target.value })}
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Buổi học (VD: Thứ 2)"
+              value={newLecture.session}
+              onChange={(e) => setNewLecture({ ...newLecture, session: e.target.value })}
+              className="p-2 border rounded"
+            />
+            <input
+              type="text"
+              placeholder="Giảng viên"
+              value={newLecture.teacher}
+              onChange={(e) => setNewLecture({ ...newLecture, teacher: e.target.value })}
+              className="p-2 border rounded"
+            />
+            <button
+              onClick={addLecture}
+              className="col-span-2 bg-green-500 text-white p-2 rounded hover:bg-green-600"
+            >
+              Thêm lịch học
+            </button>
+          </div>
+          <table className="w-full border-collapse border">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border p-2">Môn học</th>
+                <th className="border p-2">Giờ học</th>
+                <th className="border p-2">Buổi học</th>
+                <th className="border p-2">Giảng viên</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lectures.map((lecture, index) => (
+                <tr key={index}>
+                  <td className="border p-2">{lecture.subject}</td>
+                  <td className="border p-2">{lecture.time}</td>
+                  <td className="border p-2">{lecture.session}</td>
+                  <td className="border p-2">{lecture.teacher}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    };
+
+    // Component điểm danh
+    const AttendanceCheck = () => {
+      const [selectedSubject, setSelectedSubject] = useState('');
+      const [attendance, setAttendance] = useState(null);
+
+      const openCamera = () => {
+        // Giả lập nhận diện khuôn mặt
+        setAttendance({
+          id: 'SV001',
+          name: 'Nguyễn Văn A',
+          time: new Date().toLocaleString('vi-VN'),
+        });
+      };
+
+      return (
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-4">Điểm danh</h2>
+          <div className="flex gap-4 mb-6">
+            <select
+              value={selectedSubject}
+              onChange={(e) => setSelectedSubject(e.target.value)}
+              className="p-2 border rounded"
+            >
+              <option value="">Chọn môn học</option>
+              <option value="Toán">Toán</option>
+              <option value="Lý">Lý</option>
+              <option value="Hóa">Hóa</option>
+            </select>
+            <button
+              onClick={openCamera}
+              className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            >
+              Mở camera
+            </button>
+          </div>
+          {attendance && (
+            <div className="bg-gray-100 p-4 rounded">
+              <p><strong>ID:</strong> {attendance.id}</p>
+              <p><strong>Họ tên:</strong> {attendance.name}</p>
+              <p><strong>Thời gian điểm danh:</strong> {attendance.time}</p>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // Component quản lý điểm danh
+    const AttendanceManagement = () => {
+      const [attendances, setAttendances] = useState([
+        { id: 'SV001', name: 'Nguyễn Văn A', subject: 'Toán', time: '10/05/2025 08:00' },
+        { id: 'SV002', name: 'Trần Thị B', subject: 'Lý', time: '10/05/2025 10:00' },
+      ]);
+
+      return (
+        <div className="p-6">
+          <h2 className="text-2xl font-bold mb-4">Quản lý điểm danh</h2>
+          <table className="w-full border-collapse border">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border p-2">ID</th>
+                <th className="border p-2">Họ tên</th>
+                <th className="border p-2">Môn học</th>
+                <th className="border p-2">Thời gian</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attendances.map((attendance, index) => (
+                <tr key={index}>
+                  <td className="border p-2">{attendance.id}</td>
+                  <td className="border p-2">{attendance.name}</td>
+                  <td className="border p-2">{attendance.subject}</td>
+                  <td className="border p-2">{attendance.time}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    };
+
+    // Component chính
+    const App = () => {
+      const [isLoggedIn, setIsLoggedIn] = useState(false);
+      const [activeTab, setActiveTab] = useState('home');
+
+      if (!isLoggedIn) {
+        return <Login onLogin={() => setIsLoggedIn(true)} />;
+      }
+
+      return (
+        <div className="min-h-screen bg-gray-100">
+          <nav className="bg-blue-600 text-white p-4 flex justify-between items-center">
+            <h1 className="text-xl font-bold">Hệ thống điểm danh nhận diện khuôn mặt</h1>
+            <Clock />
+          </nav>
+          <div className="flex">
+            <div className="w-64 bg-white shadow-md">
+              <ul className="p-4">
+                <li
+                  className={`p-2 cursor-pointer ${activeTab === 'home' ? 'bg-blue-100' : ''}`}
+                  onClick={() => setActiveTab('home')}
+                >
+                  Trang chủ
+                </li>
+                <li
+                  className={`p-2 cursor-pointer ${activeTab === 'student' ? 'bg-blue-100' : ''}`}
+                  onClick={() => setActiveTab('student')}
+                >
+                  Quản lý sinh viên
+                </li>
+                <li
+                  className={`p-2 cursor-pointer ${activeTab === 'subject' ? 'bg-blue-100' : ''}`}
+                  onClick={() => setActiveTab('subject')}
+                >
+                  Quản lý môn học
+                </li>
+                <li
+                  className={`p-2 cursor-pointer ${activeTab === 'lecture' ? 'bg-blue-100' : ''}`}
+                  onClick={() => setActiveTab('lecture')}
+                >
+                  Quản lý lịch học
+                </li>
+                <li
+                  className={`p-2 cursor-pointer ${activeTab === 'attendance' ? 'bg-blue-100' : ''}`}
+                  onClick={() => setActiveTab('attendance')}
+                >
+                  Điểm danh
+                </li>
+                <li
+                  className={`p-2 cursor-pointer ${activeTab === 'management' ? 'bg-blue-100' : ''}`}
+                  onClick={() => setActiveTab('management')}
+                >
+                  Quản lý điểm danh
+                </li>
+              </ul>
+            </div>
+            <div className="flex-1 p-6">
+              {activeTab === 'home' && (
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">Trang chủ</h2>
+                  <p>Chào mừng đến với hệ thống điểm danh nhận diện khuôn mặt!</p>
+                </div>
+              )}
+              {activeTab === 'student' && <Student />}
+              {activeTab === 'subject' && <Subject />}
+              {activeTab === 'lecture' && <Lecture />}
+              {activeTab === 'attendance' && <AttendanceCheck />}
+              {activeTab === 'management' && <AttendanceManagement />}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Render ứng dụng
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
